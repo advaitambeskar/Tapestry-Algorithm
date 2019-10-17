@@ -20,35 +20,45 @@ defmodule TapestryAPI do
   end
 
   def getNodeIds(numNodes) do
-    numNodes_up= :math.pow(16,Float.ceil(:math.log(numNodes)/:math.log(16)))|>round
-    max_length = length(Integer.digits(numNodes_up))
-    return_nodes = for i<- 1..numNodes_up do
-      hex_i = Integer.to_string(i,16)
-      hex_i_len = String.length(hex_i)
-      if hex_i_len<max_length do
-        zeroes=String.duplicate("0",max_length-hex_i_len)
-        zeroes<>hex_i
-      else
-        hex_i
-      end
-    end
-    shuffled = Enum.shuffle(return_nodes)
-    unsorted_nodeIds = Enum.slice(shuffled,0,numNodes)
-
+    # numNodes_up= :math.pow(16,Float.ceil(:math.log(numNodes)/:math.log(16)))|>round
+    unsorted_nodeIds = generate_node_id(numNodes,[])
+    # shuffled = Enum.shuffle(return_nodes)
+    # unsorted_nodeIds = Enum.slice(shuffled,0,numNodes)
     int_hex_map = Enum.reduce(unsorted_nodeIds,%{},fn (nodeId,acc_int_hex) ->
-      {in_for_hex,""}= Integer.parse(nodeId, 16)
+      {in_for_hex,_}= Integer.parse(nodeId, 16)
       int_hex_map = Map.put(acc_int_hex,nodeId,in_for_hex)
       int_hex_map
     end)
-
     sorted_nodeIds = Enum.sort(unsorted_nodeIds,fn (a,b) -> int_hex_map[a]<int_hex_map[b] end)
-
     {sorted_nodeIds,unsorted_nodeIds}
+  end
+
+  def generate_node_id(0,accumalator) do
+    accumalator
+  end
+
+  def generate_node_id(numNodes,accumalator) do
+    random_hash_id = generate_random_node_id()
+    cond do
+      Enum.member?(accumalator,random_hash_id) ->
+        generate_node_id(numNodes,accumalator)
+      true ->
+        generate_node_id(numNodes-1, [random_hash_id|accumalator])
+    end
+  end
+
+  def generate_random_node_id() do
+    hex_vals = ["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"]
+    hash_val=
+      for i <- 0..8 do
+        Enum.random(hex_vals)
+      end
+    Enum.join(hash_val)
   end
 
   def assignHash(node_ids) do
     has_pid_map = Enum.reduce(node_ids,%{},fn (hash,return_map) ->
-      {hash,pid} = CheckNode.start(hash)
+      {hash,pid} = CheckNode.start_link(hash)
       Map.put(return_map,hash,pid)
     end)
     has_pid_map
