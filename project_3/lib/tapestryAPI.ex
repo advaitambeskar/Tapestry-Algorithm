@@ -112,6 +112,16 @@ defmodule TapestryAPI do
     end
   end
 
+  def createRoutingTable(sortedNodeID, hash_id_pid_map) do
+    # select one node from the sortedNodeID
+    # create a map of Nx16 for that node such that each level n => N will have 16 closest neighbors of pattern to node;
+
+
+  end
+
+  def createRoutingTable(node, nodeLookup) do
+
+  end
 
 
   def init(:noargs) do
