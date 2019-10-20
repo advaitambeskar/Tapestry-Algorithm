@@ -14,10 +14,9 @@ defmodule TapestryAPI do
     hashid_pid_map = assignHash(unsorted_node_ids)
 
     #create the network
-    createNetwork(sorted_node_ids,hashid_pid_map)
-
-
-  end
+    # createNetwork(sorted_node_ids,unsorted_node_ids,hashid_pid_map)
+    {sorted_node_ids,unsorted_node_ids,hashid_pid_map}
+ end
 
   def getNodeIds(numNodes) do
     # numNodes_up= :math.pow(16,Float.ceil(:math.log(numNodes)/:math.log(16)))|>round
@@ -50,7 +49,7 @@ defmodule TapestryAPI do
   def generate_random_node_id() do
     hex_vals = ["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"]
     hash_val=
-      for i <- 0..8 do
+      for i <- 0..7 do
         Enum.random(hex_vals)
       end
     Enum.join(hash_val)
@@ -58,14 +57,40 @@ defmodule TapestryAPI do
 
   def assignHash(node_ids) do
     has_pid_map = Enum.reduce(node_ids,%{},fn (hash,return_map) ->
-      {hash,pid} = CheckNode.start_link(hash)
-      Map.put(return_map,hash,pid)
+      {hash,pid} = CheckNode.start(hash)
+      return_map=Map.put(return_map,hash,pid)
+      return_map
     end)
     has_pid_map
   end
 
-  def createNetwork(sorted_node_ids,hashid_pid_map) do
+  def create_initial_routing_table(node_id) do
+    route_table = %{1 => {nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil},
+                    2 => {nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil},
+                    3 => {nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil},
+                    4 => {nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil},
+                    5 => {nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil},
+                    6 => {nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil},
+                    7 => {nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil},
+                    8 => {nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}}
+    node_id_list = String.graphemes(node_id)
+    route_table = join_elems(node_id_list,1,route_table,node_id)
+  end
 
+  def join_elems([],_n_level,route_table,_node_id) do
+    route_table
+  end
+
+  def join_elems([node_id_elem|node_id_list],n_level,route_table,node_id) do
+    col_pos = String.to_integer(node_id_elem,16)
+    rowVals = route_table[n_level]
+    rowVals = put_elem(rowVals,col_pos,node_id)
+    route_table = Map.put(route_table,n_level,rowVals)
+    join_elems(node_id_list,n_level+1,route_table,node_id)
+  end
+
+  def createNetwork(sorted_node_ids,hashid_pid_map) do
+      IO.inspect "None"
   end
 
   def level(node1, node2) do
