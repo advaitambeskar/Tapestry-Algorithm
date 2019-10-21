@@ -14,7 +14,13 @@ defmodule CheckNode do
     GenServer.cast(pid,{:updateState,routing_table})
   end
 
+  def update_backpointer(pid,node_id) do
+    GenServer.cast(pid,{:updateBackpointer,node_id})
+  end
 
+  def remove_backpointer(pid,node_id) do
+    GenServer.cast(pid,{:removeBackpointer,node_id})
+  end
 
   def handle_call(:getstate,_from,state) do
     {:reply,state,state}
@@ -25,10 +31,21 @@ defmodule CheckNode do
     {:noreply,state_map}
   end
 
+  def handle_cast({:removeBackpointer,node_id},state_map) do
+    updated_backpointers = List.delete(state_map[:backpointers],node_id)
+    state_map = Map.put(state_map,:backpointers,updated_backpointers)
+    {:noreply,state_map}
+  end
+
+  def handle_cast({:updateBackpointer,node_id},state_map) do
+    updated_backpointers= [node_id |state_map[:backpointers]]
+    state_map = Map.put(state_map,:backpointers,updated_backpointers)
+    {:noreply,state_map}
+  end
+
 
 
   def init(node_id) do
-    # init_routing_table = create_initial_routing_table(node_id)
-    {:ok,%{:nodeID=>node_id}}
+    {:ok,%{:nodeID=>node_id,:backpointers=>[]}}
   end
 end
