@@ -1,5 +1,5 @@
 defmodule NearestNeighbor do
-  def nearestneighbor(node, sorted_map) do
+  def nearestneighbor(node, sorted_map, level) do
     # given string node and a lookuptable, the idea is to find the closest string?
     # convert the hexadecimal 'node' to integer?
     # sorted_map => sorted integer map -> convert the answer into hexadecimal when returning
@@ -15,9 +15,16 @@ defmodule NearestNeighbor do
     # IO.inspect(node_int)
     # IO.inspect(sorted_map_int)
     closestNeighbor = nil
+    node_to_match = String.slice(node, 0..(level-1))
+    IO.inspect node_to_match
     closestNeighbor = near_finder(node_int, sorted_map_int, length, index, closestNeighbor, false)
-
-    closestNeighbor
+    closestNeighbor_to_match = String.slice(closestNeighbor, 0..(level-1))
+    IO.inspect closestNeighbor_to_match
+    if(String.equivalent?(closestNeighbor_to_match, node_to_match)) do
+      closestNeighbor
+    else
+      nil
+    end
   end
 
   def near_finder(node, sorted_map, length, index, closest_neighbor, is_closest_found) do
