@@ -5,7 +5,6 @@ defmodule TapestryAPI do
     GenServer.start_link(__MODULE__,:noargs,name: __MODULE__)
   end
 
-
   def startTapestry(numNodes) do
 
     # split the node_ids for dynamic node_insertion and static node_insertion
@@ -23,9 +22,9 @@ defmodule TapestryAPI do
     #TODO insert nodes dynamically
 
     #TODO route messages and return status to TapestryAPI genserver
+    Routing.beginRouting(nodeid_pid_map)
 
-
-    {sorted_node_ids,unsorted_node_ids,nodeid_pid_map}
+    # {sorted_node_ids,unsorted_node_ids,nodeid_pid_map}
 
   end
 

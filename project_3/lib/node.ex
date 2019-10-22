@@ -15,10 +15,12 @@ defmodule CheckNode do
   end
 
   def update_backpointer(pid,node_id) do
+    # Call this to change/ update backpointer table with node_id as the node to be added
     GenServer.cast(pid,{:updateBackpointer,node_id})
   end
 
   def remove_backpointer(pid,node_id) do
+    # Call this to remove the entry from the backpointer table with node_id as the node to be removed
     GenServer.cast(pid,{:removeBackpointer,node_id})
   end
 
