@@ -3,6 +3,7 @@
 
 ## Members
 Milind Jayan - 8168 9617
+
 Advait Ambeskar - 9615 9178
 
 ## Implementation
@@ -10,8 +11,11 @@ Advait Ambeskar - 9615 9178
 
 ## Constraints
 >   **Input constraints:** 1 < numberOfNodes <= 10^4
+>
 >   The constraints have been set up purely because of the limits that have been tested upon. The algorithm must work beyond the constraints specified by the input for the total numberOfNodes.
+>
 >   **Input constaints:** 1 < numberOfRequests < numberOfNodes
+>
 >   The upper-bound on the numberOfRequests is due to the condition that each of the sent requests has to be unique
 
 ## What is working
